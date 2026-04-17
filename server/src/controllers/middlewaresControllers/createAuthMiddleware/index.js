@@ -3,6 +3,7 @@ const login = require('./login');
 const logout = require('./logout');
 const forgetPassword = require('./forgetPassword');
 const resetPassword = require('./resetPassword');
+const register = require('./register'); // 1. Import the register controller
 
 const createAuthMiddleware = (userModel) => {
   let authMethods = {};
@@ -14,6 +15,12 @@ const createAuthMiddleware = (userModel) => {
 
   authMethods.login = (req, res) =>
     login(req, res, {
+      userModel,
+    });
+
+  // 2. Expose the register method
+  authMethods.register = (req, res) =>
+    register(req, res, {
       userModel,
     });
 
@@ -31,6 +38,7 @@ const createAuthMiddleware = (userModel) => {
     logout(req, res, {
       userModel,
     });
+    
   return authMethods;
 };
 

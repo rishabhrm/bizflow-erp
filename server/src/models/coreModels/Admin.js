@@ -8,7 +8,7 @@ const adminSchema = new Schema({
   },
   enabled: {
     type: Boolean,
-    default: false,
+    default: false, // You might want to change this to true if you want auto-approval upon signup
   },
 
   email: {
@@ -29,8 +29,9 @@ const adminSchema = new Schema({
   },
   role: {
     type: String,
-    default: 'owner',
-    enum: ['owner'],
+    default: 'admin',
+    // Added 'admin' and 'employee' to the allowed roles
+    enum: ['owner', 'admin', 'employee'], 
   },
 });
 

@@ -5,6 +5,9 @@ const router = express.Router();
 const appControllers = require('@/controllers/appControllers');
 const { routesList } = require('@/models/utils');
 
+// IMPORT OUR NEW REPORT CONTROLLER
+const reportController = require('@/controllers/appControllers/reportController');
+
 const routerApp = (entity, controller) => {
   router.route(`/${entity}/create`).post(catchErrors(controller['create']));
   router.route(`/${entity}/read/:id`).get(catchErrors(controller['read']));
@@ -29,5 +32,8 @@ routesList.forEach(({ entity, controllerName }) => {
   const controller = appControllers[controllerName];
   routerApp(entity, controller);
 });
+
+// REGISTER THE CUSTOM REPORT ROUTE
+router.route('/report/summary').get(catchErrors(reportController.summary));
 
 module.exports = router;

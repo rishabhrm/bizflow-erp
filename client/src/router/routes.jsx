@@ -40,6 +40,8 @@ const Expense = lazy(() => import('@/pages/Expense/index'));
 
 const Lead = lazy(() => import('@/pages/Lead/index'));
 
+const Report = lazy(() => import('@/pages/Report/index'));
+
 let routes = {
   expense: [],
   default: [
@@ -145,6 +147,10 @@ let routes = {
     {
       path: '/lead',
       element: <Lead />,
+    },
+    {
+      path: '/report',
+      element: <Report />,
     },
     {
       path: '*',
