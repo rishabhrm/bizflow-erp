@@ -36,6 +36,10 @@ const About = lazy(() => import('@/pages/About'));
 
 const Inventory = lazy(() => import('@/pages/Inventory/index'));
 
+const Expense = lazy(() => import('@/pages/Expense/index'));
+
+const Lead = lazy(() => import('@/pages/Lead/index'));
+
 let routes = {
   expense: [],
   default: [
@@ -133,6 +137,14 @@ let routes = {
     {
       path: '/inventory',
       element: <Inventory />,
+    },
+    {
+      path: '/expense',
+      element: <Expense />,
+    },
+    {
+      path: '/lead',
+      element: <Lead />,
     },
     {
       path: '*',

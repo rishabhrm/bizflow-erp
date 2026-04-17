@@ -1,117 +1,70 @@
+import React from 'react';
 import { Form, Input, Select } from 'antd';
-
 import useLanguage from '@/locale/useLanguage';
 
 export default function LeadForm() {
   const translate = useLanguage();
+
   return (
     <>
       <Form.Item
-        label={translate('first name')}
-        name="firstName"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        label={translate('last name')}
-        name="lastName"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        label={translate('email')}
-        name="email"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        label={translate('phone')}
-        name="phone"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input type="tel" />
-      </Form.Item>
-
-      <Form.Item
-        label={translate('company')}
-        name="company"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        label={translate('position in company')}
-        name="jobTitle"
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
-      <Form.Item label={translate('address')} name="address">
-        <Input />
-      </Form.Item>
-
-      <Form.Item label={translate('country')} name="country">
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        label={translate('status')}
-        name="status"
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-        initialValue={'new'}
+        label={translate('Lead Type')}
+        name="type"
+        rules={[{ required: true }]}
+        initialValue="company"
       >
         <Select
           options={[
-            { value: 'new', label: translate('new') },
-            { value: 'reached', label: translate('reached') },
-            { value: 'interested', label: translate('interested') },
-            { value: 'not interested', label: translate('not interested') },
+            { value: 'company', label: translate('Company') },
+            { value: 'people', label: translate('Individual') },
           ]}
-        ></Select>
+        />
       </Form.Item>
 
-      <Form.Item label={translate('notes')} name="notes">
+      <Form.Item
+        label={translate('Lead Name')}
+        name="name"
+        rules={[{ required: true, message: 'Please input the lead name!' }]}
+      >
+        <Input placeholder="Contact Person or Company Name" />
+      </Form.Item>
+
+      <Form.Item label={translate('Company')} name="company">
         <Input />
       </Form.Item>
 
-      <Form.Item label={translate('source')} name="source">
-        <Input placeholder="ex: linkedin, website, ads..." />
+      <Form.Item label={translate('Email')} name="email">
+        <Input type="email" />
+      </Form.Item>
+
+      <Form.Item label={translate('Phone')} name="phone">
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        label={translate('Pipeline Status')}
+        name="status"
+        initialValue="new"
+        rules={[{ required: true }]}
+      >
+        <Select
+          options={[
+            { value: 'new', label: translate('New Lead') },
+            { value: 'contacted', label: translate('Contacted') },
+            { value: 'qualified', label: translate('Qualified') },
+            { value: 'proposal', label: translate('Proposal Sent') },
+            { value: 'won', label: translate('Deal Won') },
+            { value: 'lost', label: translate('Deal Lost') },
+          ]}
+        />
+      </Form.Item>
+
+      <Form.Item label={translate('Lead Source')} name="source">
+        <Input placeholder="e.g., Website, Referral, Cold Call" />
+      </Form.Item>
+
+      <Form.Item label={translate('Notes')} name="notes">
+        <Input.TextArea rows={4} />
       </Form.Item>
     </>
   );
