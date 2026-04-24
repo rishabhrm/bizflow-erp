@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Card, Statistic, Table, Typography, Tag, Space, Tabs, Divider } from 'antd';
+import { Row, Col, Card, Statistic, Table, Typography, Tag, Space, Tabs, Divider, List } from 'antd';
 import {
   RiseOutlined,
   FallOutlined,
@@ -8,11 +8,12 @@ import {
   UsergroupAddOutlined,
   InboxOutlined,
   FileTextOutlined,
-  CheckCircleOutlined
+  CheckCircleOutlined,
+  NotificationOutlined // <-- Added new Icon
 } from '@ant-design/icons';
 
 import useLanguage from '@/locale/useLanguage';
-import { useMoney, useDate } from '@/settings';
+import { useMoney } from '@/settings';
 import { request } from '@/request';
 import useFetch from '@/hooks/useFetch';
 import useOnFetch from '@/hooks/useOnFetch';
@@ -32,9 +33,6 @@ export default function DashboardModule() {
   const { moneyFormatter } = useMoney();
   const money_format_settings = useSelector(selectMoneyFormat);
 
-  // ==========================================
-  // DATA FETCHING: OLD BILLING STATS
-  // ==========================================
   const getStatsData = async ({ entity, currency }) => {
     return await request.summary({ entity, options: { currency } });
   };
@@ -53,14 +51,14 @@ export default function DashboardModule() {
     }
   }, [money_format_settings.default_currency_code]);
 
-  // ==========================================
-  // DATA FETCHING: NEW ERP STATS
-  // ==========================================
   const [loadingNew, setLoadingNew] = useState(true);
   const [financials, setFinancials] = useState({ totalIncome: 0, totalExpense: 0, profit: 0 });
   const [counts, setCounts] = useState({ leads: 0, products: 0 });
   const [recentLeads, setRecentLeads] = useState([]);
   const [recentExpenses, setRecentExpenses] = useState([]);
+  
+  // NEW: State for Announcements
+  const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
     const fetchNewDashboardData = async () => {
@@ -76,12 +74,20 @@ export default function DashboardModule() {
           products: productRes?.success ? productRes.result : 0,
         });
 
-        // Slice to 4 items so the tables stay compact and fit on one screen
         const leadsList = await request.list({ entity: 'lead' });
         if (leadsList && leadsList.success) setRecentLeads((leadsList.result?.items || leadsList.result || []).slice(0, 4));
 
         const expenseList = await request.list({ entity: 'expense' });
         if (expenseList && expenseList.success) setRecentExpenses((expenseList.result?.items || expenseList.result || []).slice(0, 4));
+
+        // NEW: Fetch Announcements, filter only Active ones, and grab the latest 5
+        const annRes = await request.list({ entity: 'announcement' });
+        if (annRes && annRes.success) {
+          const activeAnns = (annRes.result?.items || annRes.result || [])
+            .filter((a) => a.status === 'Active')
+            .slice(0, 5);
+          setAnnouncements(activeAnns);
+        }
 
       } catch (error) {
         console.error('Error fetching new dashboard data', error);
@@ -92,9 +98,6 @@ export default function DashboardModule() {
     fetchNewDashboardData();
   }, []);
 
-  // ==========================================
-  // COMPACT TABLE COLUMNS
-  // ==========================================
   const minimalLeadColumns = [
     { title: translate('Name'), dataIndex: 'name' },
     {
@@ -128,9 +131,6 @@ export default function DashboardModule() {
     { title: translate('Status'), dataIndex: 'status' },
   ];
 
-  // ==========================================
-  // RENDER HELPERS
-  // ==========================================
   const cardStyle = { borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' };
 
   const entityData = [
@@ -192,18 +192,14 @@ export default function DashboardModule() {
         {/* ROW 2: Main Dashboard Grid */}
         <Row gutter={[24, 24]}>
           
-          {/* Main Left Column (Charts & Tables) */}
           <Col xs={24} lg={16}>
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
-              
-              {/* Charts Box */}
               <Card bordered={false} style={{ ...cardStyle, padding: '0' }} bodyStyle={{ padding: '0' }}>
                 <Row gutter={[0, 0]}>
                   {statisticCards}
                 </Row>
               </Card>
 
-              {/* Tabbed Recent Activity */}
               <Card bordered={false} style={cardStyle}>
                 <Tabs defaultActiveKey="1">
                   <TabPane tab={translate('Billing & Payments')} key="1">
@@ -235,11 +231,31 @@ export default function DashboardModule() {
             </Space>
           </Col>
 
-          {/* Side Right Column (Metrics & Operations) */}
           <Col xs={24} lg={8}>
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
               
-              {/* Client Box */}
+              {/* NEW: Announcements Feed */}
+              <Card 
+                title={translate('Company Updates')} 
+                bordered={false} 
+                style={{ ...cardStyle, maxHeight: '350px', overflowY: 'auto' }}
+              >
+                <List
+                  itemLayout="horizontal"
+                  dataSource={announcements}
+                  locale={{ emptyText: translate('No active announcements.') }}
+                  renderItem={(item) => (
+                    <List.Item>
+                      <List.Item.Meta
+                        avatar={<NotificationOutlined style={{ fontSize: '20px', color: '#1890ff', marginTop: '4px' }} />}
+                        title={<span style={{ fontWeight: '600' }}>{item.title}</span>}
+                        description={<span style={{ fontSize: '13px' }}>{item.content}</span>}
+                      />
+                    </List.Item>
+                  )}
+                />
+              </Card>
+              
               <div style={cardStyle}>
                 <CustomerPreviewCard 
                   isLoading={clientLoading} 
@@ -248,7 +264,6 @@ export default function DashboardModule() {
                 />
               </div>
               
-              {/* Monthly Activity Stack */}
               <Card title={translate('Monthly Activity')} bordered={false} style={cardStyle}>
                 <Row gutter={[0, 16]}>
                   <Col span={12}>
@@ -264,7 +279,6 @@ export default function DashboardModule() {
                 </Row>
               </Card>
 
-              {/* Ops Stack */}
               <Card title={translate('Operational Metrics')} bordered={false} style={cardStyle}>
                  <Row gutter={[0, 16]}>
                   <Col span={12}>

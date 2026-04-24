@@ -42,6 +42,11 @@ const Lead = lazy(() => import('@/pages/Lead/index'));
 
 const Report = lazy(() => import('@/pages/Report/index'));
 
+const Employee = lazy(() => import('@/pages/Employee/index'));
+const HrManagement = lazy(() => import('@/pages/HrManagement/index'));
+const CompanyDocument = lazy(() => import('@/pages/CompanyDocument/index'));
+const Announcement = lazy(() => import('@/pages/Announcement/index'));
+
 let routes = {
   expense: [],
   default: [
@@ -151,6 +156,22 @@ let routes = {
     {
       path: '/report',
       element: <Report />,
+    },
+    {
+      path: '/employee',
+      element: <Employee />,
+    },
+    {
+      path: '/hr-management',
+      element: <HrManagement />,
+    },
+    {
+      path: '/documents',
+      element: <CompanyDocument />,
+    },
+    {
+      path: '/announcements',
+      element: <Announcement />,
     },
     {
       path: '*',

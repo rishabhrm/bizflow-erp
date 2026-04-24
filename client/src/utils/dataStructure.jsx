@@ -1,20 +1,24 @@
 import dayjs from 'dayjs';
-import { Switch, Tag } from 'antd';
-import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { Switch, Tag, Button } from 'antd'; // Added Button
+import { CloseOutlined, CheckOutlined, DownloadOutlined } from '@ant-design/icons'; // Added DownloadOutlined
 import { countryList } from '@/utils/countryList';
 import { generate as uniqueId } from 'shortid';
 import color from '@/utils/color';
+import { BASE_URL } from '@/config/serverApiConfig'; // Added to build the download link
 
 export const dataForRead = ({ fields, translate }) => {
   let columns = [];
 
   Object.keys(fields).forEach((key) => {
     let field = fields[key];
-    columns.push({
-      title: field.label ? field.label : key,
-      dataIndex: field.dataIndex ? field.dataIndex.join('.') : key,
-      isDate: field.type === 'date',
-    });
+    
+    if (!field.disableForRead) {
+      columns.push({
+        title: field.label ? field.label : key,
+        dataIndex: field.dataIndex ? field.dataIndex.join('.') : key,
+        isDate: field.type === 'date',
+      });
+    }
   });
 
   return columns;
@@ -28,6 +32,30 @@ export function dataForTable({ fields, translate, moneyFormatter, dateFormat }) 
     const keyIndex = field.dataIndex ? field.dataIndex : [key];
 
     const component = {
+      // --------------------------------------------------------
+      // NEW 'FILE' TYPE COMPONENT FOR DOWNLOAD LINKS
+      // --------------------------------------------------------
+      file: {
+        title: field.label ? translate(field.label) : translate(key),
+        dataIndex: keyIndex,
+        render: (_, record) => {
+          const filePath = record[key];
+          if (!filePath) return '-';
+          
+          // If it's an external link (Google Drive), use it. If it's an uploaded file, prepend the backend server URL
+          const url = filePath.startsWith('http') ? filePath : BASE_URL + filePath;
+          
+          return (
+            <a href={url} target="_blank" rel="noreferrer">
+              <Button type="link" icon={<DownloadOutlined />}>
+                {translate('Download')}
+              </Button>
+            </a>
+          );
+        },
+      },
+      // --------------------------------------------------------
+      
       boolean: {
         title: field.label ? translate(field.label) : translate(key),
         dataIndex: keyIndex,
@@ -219,10 +247,6 @@ function getRandomColor() {
     'geekblue',
     'purple',
   ];
-
-  // Generate a random index between 0 and the length of the colors array
   const randomIndex = Math.floor(Math.random() * colors.length);
-
-  // Return the color at the randomly generated index
   return colors[randomIndex];
 }

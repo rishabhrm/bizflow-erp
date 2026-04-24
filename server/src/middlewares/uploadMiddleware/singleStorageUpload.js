@@ -1,5 +1,6 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs'); // <-- ADD THIS IMPORT
 const { slugify } = require('transliteration');
 
 const fileFilter = require('./utils/LocalfileFilter');
@@ -12,7 +13,16 @@ const singleStorageUpload = ({
 }) => {
   var diskStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, `src/public/uploads/${entity}`);
+      // --- ADDED DIRECTORY CREATION LOGIC ---
+      const dir = `src/public/uploads/${entity}`;
+      
+      // If the directory doesn't exist, create it recursively
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      cb(null, dir);
+      // --------------------------------------
     },
     filename: function (req, file, cb) {
       try {

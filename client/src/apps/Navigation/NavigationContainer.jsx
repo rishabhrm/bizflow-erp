@@ -23,6 +23,11 @@ import {
   ShoppingCartOutlined,
   InboxOutlined,
   LineChartOutlined,
+  // NEW ICONS ADDED BELOW:
+  IdcardOutlined,
+  TeamOutlined,
+  FolderOpenOutlined,
+  NotificationOutlined,
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -98,6 +103,27 @@ function Sidebar({ collapsible, isMobile = false }) {
         },
       ],
     },
+    // ----------------------------------------------------
+    // NEW HR & STAFF GROUP
+    // ----------------------------------------------------
+    {
+      key: 'hr',
+      label: translate('HR & Staff'),
+      type: 'group',
+      children: [
+        {
+          key: 'employee',
+          icon: <IdcardOutlined />,
+          label: <Link to={'/employee'}>{translate('Employees')}</Link>,
+        },
+        {
+          key: 'hr-management',
+          icon: <TeamOutlined />,
+          label: <Link to={'/hr-management'}>{translate('HR Management')}</Link>,
+        },
+      ],
+    },
+    // ----------------------------------------------------
     {
       key: 'operations',
       label: translate('Operations'),
@@ -107,6 +133,17 @@ function Sidebar({ collapsible, isMobile = false }) {
           key: 'inventory',
           icon: <InboxOutlined />,
           label: <Link to={'/inventory'}>{translate('Product Catalog')}</Link>,
+        },
+        // NEW DOCUMENTS & ANNOUNCEMENTS
+        {
+          key: 'documents',
+          icon: <FolderOpenOutlined />,
+          label: <Link to={'/documents'}>{translate('Company Docs')}</Link>,
+        },
+        {
+          key: 'announcements',
+          icon: <NotificationOutlined />,
+          label: <Link to={'/announcements'}>{translate('Announcements')}</Link>,
         },
       ],
     },
@@ -131,7 +168,7 @@ function Sidebar({ collapsible, isMobile = false }) {
       type: 'group',
       children: [
         {
-          key: 'payment/mode', // Keys updated to match exact paths for active-highlighting
+          key: 'payment/mode', 
           icon: <WalletOutlined />,
           label: <Link to={'/payment/mode'}>{translate('Payment Modes')}</Link>,
         },

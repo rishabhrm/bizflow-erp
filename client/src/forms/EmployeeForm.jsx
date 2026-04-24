@@ -1,145 +1,75 @@
-import { Form, Input, Select } from 'antd';
-import { DatePicker } from 'antd';
-import { validatePhoneNumber } from '@/utils/helpers';
-import { useDate } from '@/settings';
-
+import React from 'react';
+import { Form, Input, DatePicker, InputNumber, Select } from 'antd';
 import useLanguage from '@/locale/useLanguage';
 
-export default function EmployeeForm() {
+export default function EmployeeForm({ isUpdateForm = false }) {
   const translate = useLanguage();
-  const { dateFormat } = useDate();
 
   return (
     <>
       <Form.Item
+        label={translate('Full Name')}
         name="name"
-        label={translate('first name')}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
+        rules={[{ required: true, message: 'Please input the employee name!' }]}
       >
         <Input />
       </Form.Item>
+
       <Form.Item
-        name="surname"
-        label={translate('last name')}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
+        label={translate('Date of Birth')}
+        name="dob"
+        rules={[{ required: true, message: 'Please select date of birth!' }]}
+      >
+        <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
+      </Form.Item>
+
+      <Form.Item
+        label={translate('Designation')}
+        name="designation"
+        rules={[{ required: true }]}
       >
         <Input />
       </Form.Item>
+
       <Form.Item
-        name="birthday"
-        label={translate('birthday')}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
+        label={translate('Date of Joining')}
+        name="dateOfJoining"
+        rules={[{ required: true }]}
       >
-        <DatePicker placeholder={translate('select_date')} format={dateFormat} />
+        <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
       </Form.Item>
+
       <Form.Item
-        name="birthplace"
-        label={translate('birthplace')}
+        label={translate('Attendance (Monthly)')}
+        name="attendance"
+        tooltip="Enter the total number of days the employee was present this month."
         rules={[
-          {
-            required: true,
-          },
+          { 
+            type: 'number', 
+            max: 31, 
+            message: 'A month cannot have more than 31 days!' 
+          }
         ]}
       >
-        <Input />
+        <InputNumber 
+          style={{ width: '100%' }} 
+          min={0} 
+          max={31} 
+          addonAfter="Days"
+          placeholder="e.g. 24"
+        />
       </Form.Item>
+
       <Form.Item
-        name="gender"
-        label={translate('gender')}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
+        label={translate('Employee Status')}
+        name="status"
+        initialValue="active"
+        rules={[{ required: true, message: 'Please select the employee status!' }]}
       >
-        <Select>
-          <Select.Option value="men">{translate('men')}</Select.Option>
-          <Select.Option value="women">{translate('women')}</Select.Option>
+        <Select style={{ width: '100%' }}>
+          <Select.Option value="active">Active</Select.Option>
+          <Select.Option value="former">Former</Select.Option>
         </Select>
-      </Form.Item>
-      <Form.Item
-        name="email"
-        label={translate('email')}
-        rules={[
-          {
-            type: 'email',
-          },
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="phone"
-        label={translate('phone')}
-        rules={[
-          {
-            required: true,
-          },
-          {
-            pattern: validatePhoneNumber, // importing regex from helper.js utility file to validate
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="department"
-        label={translate('Department')}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="position"
-        label={translate('Position')}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="address"
-        label={translate('Address')}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="state"
-        label={translate('State')}
-        rules={[
-          {
-            required: true,
-          },
-        ]}
-      >
-        <Input />
       </Form.Item>
     </>
   );
